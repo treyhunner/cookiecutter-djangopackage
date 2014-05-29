@@ -1,55 +1,50 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-import sys
+from os.path import join
+from setuptools import setup, find_packages
 
 import {{ cookiecutter.app_name }}
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
 
-version = {{ cookiecutter.app_name }}.__version__
+def get_version():
+    with open(join('{{ cookiecutter.app_name }}', '__init__.py')) as f:
+        for line in f:
+            if line.startswith('__version__ ='):
+                return line.split('=')[1].strip().strip('"\'')
 
-if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist upload')
-    print("You probably want to also tag the version now:")
-    print("  git tag -a %s -m 'version %s'" % (version, version))
-    print("  git push --tags")
-    sys.exit()
-
-readme = open('README.rst').read()
-history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 setup(
     name='{{ cookiecutter.project_name }}',
-    version=version,
+    version=get_version(),
     description="""{{ cookiecutter.project_short_description }}""",
-    long_description=readme + '\n\n' + history,
+    long_description='\n\n'.join((
+        open('README.rst').read(),
+        open('CHANGES.rst').read(),
+    )),
     author='{{ cookiecutter.full_name }}',
     author_email='{{ cookiecutter.email }}',
     url='https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}',
-    packages=[
-        '{{ cookiecutter.app_name }}',
-    ],
+    packages=find_packages(),
     include_package_data=True,
-    install_requires=[
-    ],
-    license="BSD",
+    install_requires=['Django >= 1.5'],
+    tests_require=['Django >= 1.5'],
     zip_safe=False,
-    keywords='{{ cookiecutter.repo_name }}',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
-        'Framework :: Django',
+        'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
+        'Operating System :: OS Independent',
         'Natural Language :: English',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Framework :: Django',
     ],
+    test_suite='runtests.runtests',
 )

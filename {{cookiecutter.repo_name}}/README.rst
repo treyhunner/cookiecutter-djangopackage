@@ -13,23 +13,18 @@
 
 {{ cookiecutter.project_short_description}}
 
-Documentation
+This app requires Django 1.5 or greater and Python 2.6 or greater.
+
+Getting Help
 -------------
 
-The full documentation is at https://{{ cookiecutter.repo_name }}.readthedocs.org.
+Documentation for {{ cookiecutter.project_name }} is available at https://{{ cookiecutter.repo_name }}.readthedocs.org.
 
-Quickstart
-----------
+This app is available on `PyPI`_.
 
-Install {{ cookiecutter.project_name }}::
+Submit issues on Github: https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}/issues.
 
-    pip install {{ cookiecutter.repo_name }}
+Pull requests are welcome.  Read the CONTRIBUTING file for tips on submitting
+a pull request.
 
-Then use it in a project::
-
-    import {{ cookiecutter.repo_name }}
-
-Features
---------
-
-* TODO
+.. _PyPI: https://pypi.python.org/pypi/{{ cookiecutter.repo_name }}/

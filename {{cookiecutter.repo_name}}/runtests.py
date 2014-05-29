@@ -1,43 +1,52 @@
+import os
 import sys
 
 try:
+    import django
     from django.conf import settings
-
-    settings.configure(
-        DEBUG=True,
-        USE_TZ=True,
-        DATABASES={
-            "default": {
-                "ENGINE": "django.db.backends.sqlite3",
-            }
-        },
-        ROOT_URLCONF="{{ cookiecutter.app_name }}.urls",
-        INSTALLED_APPS=[
-            "django.contrib.auth",
-            "django.contrib.contenttypes",
-            "django.contrib.sites",
-            "{{ cookiecutter.app_name }}",
-        ],
-        SITE_ID=1,
-        NOSE_ARGS=['-s'],
-    )
-
-    from django_nose import NoseTestSuiteRunner
 except ImportError:
-    raise ImportError("To fix this error, run: pip install -r requirements-test.txt")
+    raise ImportError("To fix this error, run: "
+                      "pip install -r requirements-test.txt")
+
+DEFAULT_SETTINGS = dict(
+    DATABASES={
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+        }
+    },
+    ROOT_URLCONF="{{ cookiecutter.app_name }}.tests.urls",
+    INSTALLED_APPS=[
+        "django.contrib.auth",
+        "django.contrib.contenttypes",
+        "django.contrib.sites",
+        "{{ cookiecutter.app_name }}",
+        "{{ cookiecutter.app_name }}.tests",
+    ],
+)
 
 
 def run_tests(*test_args):
-    if not test_args:
+    if not settings.configured:
+        settings.configure(**DEFAULT_SETTINGS)
+
+    if hasattr(django, 'setup'):
+        django.setup()
+
+    parent = os.path.dirname(os.path.abspath(__file__))
+    sys.path.insert(0, parent)
+
+    try:
+        from django.test.runner import DiscoverRunner
+        runner_class = DiscoverRunner
+        test_args = ['{{ cookiecutter.app_name }}.tests']
+    except ImportError:
+        from django.test.simple import DjangoTestSuiteRunner
+        runner_class = DjangoTestSuiteRunner
         test_args = ['tests']
 
-    # Run tests
-    test_runner = NoseTestSuiteRunner(verbosity=1)
-
-    failures = test_runner.run_tests(test_args)
-
-    if failures:
-        sys.exit(failures)
+    failures = runner_class(
+        verbosity=1, interactive=True, failfast=False).run_tests(test_args)
+    sys.exit(failures)
 
 
 if __name__ == '__main__':

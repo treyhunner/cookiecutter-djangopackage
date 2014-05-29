@@ -1,13 +1,3 @@
-=======
-Credits
-=======
+Authors and contributors to django-email-log (listed alphabetically):
 
-Development Lead
-----------------
-
-* {{ cookiecutter.full_name }} <{{ cookiecutter.email }}>
-
-Contributors
-------------
-
-None yet. Why not be the first?
+- {{ cookiecutter.full_name }} <{{ cookiecutter.email }}>
